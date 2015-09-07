@@ -70,6 +70,20 @@ that they are intended for consumption by Configurable consumers.
 A command line parsing adapter should typically be able to make do with a Configurable
 which implements just `CfSetValue` and `CfName`.
 
+The Standard Bindings
+---------------------
+
+The `cflag` package allows you to easily declare configuration items in a flag-like manner.
+
+The `cstruct` package allows you to automatically generate configuration items from an annotated structure.
+
+The `adaptflag` package adapts declared configuration items to flags and
+registers them with the standard flag package and the
+[pflag](https://github.com/ogier/pflag) package. You can also use it with any
+flag package you like if it implements a similar registration interface.
+
+If you wish, you can eschew all of these packages and make your own.
+
 Background Reading
 ------------------
 

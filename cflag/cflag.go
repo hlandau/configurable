@@ -1,3 +1,11 @@
+// Package cflag provides a flag-like means of declaring configurables.
+//
+// The functions in this package which take a Registerable argument can
+// have that argument passed as non-nil, in which case the configurable
+// becomes a child of the configurable passed, or nil, in which case
+// the configurable is registered at the top level.
+//
+// You should call Value() to get the value of a flag configurable.
 package cflag
 
 import "fmt"
@@ -14,6 +22,9 @@ type Registerable interface {
 
 type noReg struct{}
 
+// Dummy Registerable implementation which does not do anything.
+//
+// Can be used to inhibit autoregistration.
 var NoReg noReg
 
 func (r *noReg) Register(configurable configurable.Configurable) {
@@ -45,10 +56,13 @@ func (ig *Group) String() string {
 	return fmt.Sprintf("%s", ig.name)
 }
 
+// Register a child configurable to the group.
 func (ig *Group) Register(cfg configurable.Configurable) {
 	ig.configurables = append(ig.configurables, cfg)
 }
 
+// Creates a flag group. A Group is itself a configurable and can hold multiple
+// flags.
 func NewGroup(reg Registerable, name string) *Group {
 	ig := &Group{
 		name: name,
@@ -59,20 +73,16 @@ func NewGroup(reg Registerable, name string) *Group {
 
 // String
 
-type SimpleFlag struct {
+type StringFlag struct {
 	name, curValue, summaryLine, defaultValue string
 	curValuep                                 *string
 }
 
-func (sf *SimpleFlag) CfChildren() []configurable.Configurable {
-	return nil
-}
-
-func (sf *SimpleFlag) String() string {
+func (sf *StringFlag) String() string {
 	return fmt.Sprintf("SimpleFlag(%s: %#v)", sf.name, *sf.curValuep)
 }
 
-func (sf *SimpleFlag) CfSetValue(v interface{}) error {
+func (sf *StringFlag) CfSetValue(v interface{}) error {
 	vs, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("value must be a string")
@@ -82,28 +92,39 @@ func (sf *SimpleFlag) CfSetValue(v interface{}) error {
 	return nil
 }
 
-func (sf *SimpleFlag) CfValue() interface{} {
+func (sf *StringFlag) CfValue() interface{} {
 	return *sf.curValuep
 }
 
-func (sf *SimpleFlag) CfName() string {
+func (sf *StringFlag) CfName() string {
 	return sf.name
 }
 
-func (sf *SimpleFlag) CfUsageSummaryLine() string {
+func (sf *StringFlag) CfUsageSummaryLine() string {
 	return sf.summaryLine
 }
 
-func (sf *SimpleFlag) CfDefaultValue() interface{} {
+func (sf *StringFlag) CfDefaultValue() interface{} {
 	return sf.defaultValue
 }
 
-func (sf *SimpleFlag) Value() string {
+// Get the flag's current value.
+func (sf *StringFlag) Value() string {
 	return *sf.curValuep
 }
 
-func NewSimpleFlag(reg Registerable, name, summaryLine, defaultValue string) *SimpleFlag {
-	sf := &SimpleFlag{
+// Set the flag's current value.
+func (sf *StringFlag) SetValue(value string) {
+	*sf.curValuep = value
+}
+
+// Creates a flag of type string.
+//
+// reg: See package-level documentation.
+//
+// summaryLine: One-line usage summary.
+func String(reg Registerable, name, summaryLine, defaultValue string) *StringFlag {
+	sf := &StringFlag{
 		name:         name,
 		summaryLine:  summaryLine,
 		defaultValue: defaultValue,
@@ -117,21 +138,17 @@ func NewSimpleFlag(reg Registerable, name, summaryLine, defaultValue string) *Si
 
 // Int
 
-type SimpleFlagInt struct {
+type IntFlag struct {
 	name, summaryLine      string
 	curValue, defaultValue int
 	curValuep              *int
 }
 
-func (sf *SimpleFlagInt) CfChildren() []configurable.Configurable {
-	return nil
+func (sf *IntFlag) String() string {
+	return fmt.Sprintf("IntFlag(%s: %#v)", sf.name, *sf.curValuep)
 }
 
-func (sf *SimpleFlagInt) String() string {
-	return fmt.Sprintf("SimpleFlagInt(%s: %#v)", sf.name, *sf.curValuep)
-}
-
-func (sf *SimpleFlagInt) CfSetValue(v interface{}) error {
+func (sf *IntFlag) CfSetValue(v interface{}) error {
 	vi, ok := v.(int)
 	if ok {
 		*sf.curValuep = vi
@@ -153,28 +170,39 @@ func (sf *SimpleFlagInt) CfSetValue(v interface{}) error {
 	return fmt.Errorf("invalid value for configurable %#v, expecting int: %v", sf.name, v)
 }
 
-func (sf *SimpleFlagInt) CfValue() interface{} {
+func (sf *IntFlag) CfValue() interface{} {
 	return sf.curValue
 }
 
-func (sf *SimpleFlagInt) CfName() string {
+func (sf *IntFlag) CfName() string {
 	return sf.name
 }
 
-func (sf *SimpleFlagInt) CfUsageSummaryLine() string {
+func (sf *IntFlag) CfUsageSummaryLine() string {
 	return sf.summaryLine
 }
 
-func (sf *SimpleFlagInt) CfDefaultValue() interface{} {
+func (sf *IntFlag) CfDefaultValue() interface{} {
 	return sf.defaultValue
 }
 
-func (sf *SimpleFlagInt) Value() int {
-	return sf.curValue
+// Get the flag's current value.
+func (sf *IntFlag) Value() int {
+	return *sf.curValuep
 }
 
-func NewSimpleFlagInt(reg Registerable, name, summaryLine string, defaultValue int) *SimpleFlagInt {
-	sf := &SimpleFlagInt{
+// Set the flag's current value.
+func (sf *IntFlag) SetValue(value int) {
+	*sf.curValuep = value
+}
+
+// Creates a flag of type int.
+//
+// reg: See package-level documentation.
+//
+// summaryLine: One-line usage summary.
+func Int(reg Registerable, name, summaryLine string, defaultValue int) *IntFlag {
+	sf := &IntFlag{
 		name:         name,
 		summaryLine:  summaryLine,
 		defaultValue: defaultValue,
@@ -188,23 +216,19 @@ func NewSimpleFlagInt(reg Registerable, name, summaryLine string, defaultValue i
 
 // Bool
 
-type SimpleFlagBool struct {
+type BoolFlag struct {
 	name, summaryLine      string
 	curValue, defaultValue bool
 	curValuep              *bool
 }
 
-func (sf *SimpleFlagBool) CfChildren() []configurable.Configurable {
-	return nil
-}
-
-func (sf *SimpleFlagBool) String() string {
-	return fmt.Sprintf("SimpleFlagBool(%s: %#v)", sf.name, sf.curValue)
+func (sf *BoolFlag) String() string {
+	return fmt.Sprintf("BoolFlag(%s: %#v)", sf.name, sf.curValue)
 }
 
 var re_no = regexp.MustCompilePOSIX(`^(00?|no?|f(alse)?)$`)
 
-func (sf *SimpleFlagBool) CfSetValue(v interface{}) error {
+func (sf *BoolFlag) CfSetValue(v interface{}) error {
 	vb, ok := v.(bool)
 	if ok {
 		*sf.curValuep = vb
@@ -227,28 +251,39 @@ func (sf *SimpleFlagBool) CfSetValue(v interface{}) error {
 	return fmt.Errorf("invalid value for configurable %#v, expecting bool: %v", sf.name, v)
 }
 
-func (sf *SimpleFlagBool) CfValue() interface{} {
+func (sf *BoolFlag) CfValue() interface{} {
 	return sf.curValue
 }
 
-func (sf *SimpleFlagBool) CfName() string {
+func (sf *BoolFlag) CfName() string {
 	return sf.name
 }
 
-func (sf *SimpleFlagBool) CfUsageSummaryLine() string {
+func (sf *BoolFlag) CfUsageSummaryLine() string {
 	return sf.summaryLine
 }
 
-func (sf *SimpleFlagBool) CfDefaultValue() interface{} {
+func (sf *BoolFlag) CfDefaultValue() interface{} {
 	return sf.defaultValue
 }
 
-func (sf *SimpleFlagBool) Value() bool {
-	return sf.curValue
+// Call to get the flag's current value.
+func (sf *BoolFlag) Value() bool {
+	return *sf.curValuep
 }
 
-func NewSimpleFlagBool(reg Registerable, name, summaryLine string, defaultValue bool) *SimpleFlagBool {
-	sf := &SimpleFlagBool{
+// Set the flag's current value.
+func (sf *BoolFlag) SetValue(value bool) {
+	*sf.curValuep = value
+}
+
+// Creates a flag of type bool.
+//
+// reg: See package-level documentation.
+//
+// summaryLine: One-line usage summary.
+func Bool(reg Registerable, name, summaryLine string, defaultValue bool) *BoolFlag {
+	sf := &BoolFlag{
 		name:         name,
 		summaryLine:  summaryLine,
 		defaultValue: defaultValue,

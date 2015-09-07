@@ -1,3 +1,20 @@
+// Package cstruct allows for the automatic generation of configurables from an
+// annotated structure.
+//
+// To use cstruct, you call New or MustNew, passing a pointer to an instance of
+// an annotated structure type.
+//
+// The supported field types are string, int and bool. A field is only used if
+// it is public and has the `default` or `usage` tags specified on it, or both.
+// The name of the field will be used as the configurable name.
+//
+// The following tags can be placed on fields:
+//
+//   default: The default value as a string.
+//   usage: A one-line usage summary.
+//
+// Once you have created a cstruct Configurable group, you must register it
+// appropriately as you see fit, for example by calling configurable.Register.
 package cstruct
 
 import "fmt"
@@ -19,10 +36,6 @@ type value struct {
 	name, usageSummaryLine string
 	v                      reflect.Value
 	defaultValue           interface{}
-}
-
-func (v *value) CfChildren() []configurable.Configurable {
-	return nil
 }
 
 func (v *value) CfName() string {
@@ -89,6 +102,7 @@ func parseString(s string, t reflect.Type) (interface{}, error) {
 	}
 }
 
+// Like New, but panics on failure.
 func MustNew(target interface{}) (c configurable.Configurable) {
 	c, err := New(target)
 	if err != nil {
@@ -98,6 +112,9 @@ func MustNew(target interface{}) (c configurable.Configurable) {
 	return c
 }
 
+// Creates a new group Configurable, with children representing the fields.
+//
+// The Configurables set the values of the fields of the instance.
 func New(target interface{}) (c configurable.Configurable, err error) {
 	t := reflect.TypeOf(target)
 	v := reflect.ValueOf(target)

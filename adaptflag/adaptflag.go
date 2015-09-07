@@ -1,3 +1,5 @@
+// Package adaptflag adapts registered configurables to common flag parsing
+// packages, thereby making configurables configurable from the command line.
 package adaptflag
 
 import "fmt"
@@ -96,6 +98,10 @@ func adapt(c configurable.Configurable, f AdaptFunc) error {
 	return nil
 }
 
+// Called repeatedly by AdoptWithFunc. Your implementation of this function
+// should register the Value with the details provided. It is especially
+// suitable for use with functions like flag.Var or packages which provide
+// similar interfaces.
 type AdaptFunc func(v Value, name, usage string)
 
 func recursiveAdapt(c configurable.Configurable, f AdaptFunc) error {
@@ -111,18 +117,25 @@ func recursiveAdapt(c configurable.Configurable, f AdaptFunc) error {
 	return nil
 }
 
+// The interface which this package exposes to the flag packages it adapts to.
 type Value interface {
 	String() string
 	Set(x string) error
-	//Get() interface{}
 }
 
+// Similar to Adapt, but allows you to register to the flag package of your
+// choice, so long as it implements an interface similar to the flag.Var
+// function.
 func AdaptWithFunc(f AdaptFunc) {
 	configurable.Visit(func(c configurable.Configurable) error {
 		return recursiveAdapt(c, f)
 	})
 }
 
+// Adapt registers all registered configurables as flags with the flag and
+// ogier/pflag packages. Note that Adapt will not do anything with
+// Configurables which it has already adapted once, thus it is safe to call
+// this function multiple times.
 func Adapt() {
 	AdaptWithFunc(func(v Value, name, usage string) {
 		flag.Var(v, name, usage)
