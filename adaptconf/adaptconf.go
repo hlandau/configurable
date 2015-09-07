@@ -12,6 +12,11 @@ import "gopkg.in/hlandau/service.v1/exepath"
 import "github.com/BurntSushi/toml"
 
 var confFlag = cflag.String(nil, "conf", "Configuration file path", "")
+var lastConfPath string
+
+func LastConfPath() string {
+	return lastConfPath
+}
 
 func LoadPath(confFilePath string) error {
 	var m map[string]interface{}
@@ -19,6 +24,8 @@ func LoadPath(confFilePath string) error {
 	if err != nil {
 		return err
 	}
+
+	lastConfPath = confFilePath
 
 	configurable.Visit(func(c configurable.Configurable) error {
 		applyChild(c, m)
