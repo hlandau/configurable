@@ -52,6 +52,9 @@ func Register(configurable Configurable) {
 }
 
 // Visits all registered top-level Configurables.
+//
+// Returning a non-nil error short-circuits the iteration process and returns
+// that error.
 func Visit(do func(configurable Configurable) error) error {
 	configurablesMutex.Lock()
 	defer configurablesMutex.Unlock()
