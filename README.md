@@ -1,7 +1,7 @@
 Configurable: The useless Go configuration package that doesn't do anything
 ===========================================================================
 
-[GoDoc](http://godoc.org/github.com/hlandau/configurable)
+[GoDoc](http://godoc.org/gopkg.in/hlandau/configurable.v0)
 
 Configurable is a Go library for managing program configuration information, no
 matter whether it comes from command line arguments, configuration files,
