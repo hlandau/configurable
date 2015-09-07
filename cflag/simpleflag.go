@@ -61,7 +61,7 @@ func NewGroup(reg Registerable, name string) *Group {
 
 type SimpleFlag struct {
 	name, curValue, summaryLine, defaultValue string
-  curValuep *string
+	curValuep                                 *string
 }
 
 func (sf *SimpleFlag) CfChildren() []configurable.Configurable {
@@ -99,7 +99,7 @@ func (sf *SimpleFlag) CfDefaultValue() interface{} {
 }
 
 func (sf *SimpleFlag) Value() string {
-  return *sf.curValuep
+	return *sf.curValuep
 }
 
 func NewSimpleFlag(reg Registerable, name, summaryLine, defaultValue string) *SimpleFlag {
@@ -109,7 +109,7 @@ func NewSimpleFlag(reg Registerable, name, summaryLine, defaultValue string) *Si
 		defaultValue: defaultValue,
 		curValue:     defaultValue,
 	}
-  sf.curValuep = &sf.curValue
+	sf.curValuep = &sf.curValue
 
 	register(reg, sf)
 	return sf
@@ -120,7 +120,7 @@ func NewSimpleFlag(reg Registerable, name, summaryLine, defaultValue string) *Si
 type SimpleFlagInt struct {
 	name, summaryLine      string
 	curValue, defaultValue int
-  curValuep *int
+	curValuep              *int
 }
 
 func (sf *SimpleFlagInt) CfChildren() []configurable.Configurable {
@@ -170,7 +170,7 @@ func (sf *SimpleFlagInt) CfDefaultValue() interface{} {
 }
 
 func (sf *SimpleFlagInt) Value() int {
-  return sf.curValue
+	return sf.curValue
 }
 
 func NewSimpleFlagInt(reg Registerable, name, summaryLine string, defaultValue int) *SimpleFlagInt {
@@ -180,7 +180,7 @@ func NewSimpleFlagInt(reg Registerable, name, summaryLine string, defaultValue i
 		defaultValue: defaultValue,
 		curValue:     defaultValue,
 	}
-  sf.curValuep = &sf.curValue
+	sf.curValuep = &sf.curValue
 
 	register(reg, sf)
 	return sf
@@ -191,7 +191,7 @@ func NewSimpleFlagInt(reg Registerable, name, summaryLine string, defaultValue i
 type SimpleFlagBool struct {
 	name, summaryLine      string
 	curValue, defaultValue bool
-  curValuep *bool
+	curValuep              *bool
 }
 
 func (sf *SimpleFlagBool) CfChildren() []configurable.Configurable {
@@ -244,7 +244,7 @@ func (sf *SimpleFlagBool) CfDefaultValue() interface{} {
 }
 
 func (sf *SimpleFlagBool) Value() bool {
-  return sf.curValue
+	return sf.curValue
 }
 
 func NewSimpleFlagBool(reg Registerable, name, summaryLine string, defaultValue bool) *SimpleFlagBool {
@@ -254,7 +254,7 @@ func NewSimpleFlagBool(reg Registerable, name, summaryLine string, defaultValue 
 		defaultValue: defaultValue,
 		curValue:     defaultValue,
 	}
-  sf.curValuep = &sf.curValue
+	sf.curValuep = &sf.curValue
 
 	register(reg, sf)
 	return sf

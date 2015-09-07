@@ -38,12 +38,8 @@ A Configurable is an object that represents some configurable thing. It is
 obliged only to implement the following interface:
 
 ```go
-type Configurable interface {
-  CfChildren() []Configurable
-}
+type Configurable interface{}
 ```
-
-A Configurable which has no children may return nil in `CfChildren()`.
 
 Configurable is designed around interface upgrades. If you want to actually do
 anything with a Configurable, you must attempt to cast it to an interface with
@@ -60,6 +56,8 @@ order of importance:
   - `CfDefaultValue() interface{}` — get the Configurable's default value.
 
   - `CfGetValue() interface{}` — get the Configurable's value.
+
+  - `CfChildren() []Configurable` — return the children of this Configurable, if any.
 
   - `CfUsageSummaryLine() string` — get a one-line usage summary suitable for
     use as  command line usage information.

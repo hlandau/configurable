@@ -100,8 +100,13 @@ type AdaptFunc func(v Value, name, usage string)
 
 func recursiveAdapt(c configurable.Configurable, f AdaptFunc) error {
 	adapt(c, f)
-	for _, ch := range c.CfChildren() {
-		recursiveAdapt(ch, f)
+	cc, ok := c.(interface {
+		CfChildren() []configurable.Configurable
+	})
+	if ok {
+		for _, ch := range cc.CfChildren() {
+			recursiveAdapt(ch, f)
+		}
 	}
 	return nil
 }

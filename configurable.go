@@ -1,25 +1,57 @@
+// Package configurable provides an integration nexus for program and library
+// configuration items.
+//
+// Configurable is a Go library for managing program configuration information,
+// no matter whether it comes from command line arguments, configuration files,
+// environment variables, or anywhere else.
+//
+// The most noteworthy feature of configurable is that it doesn't do anything.
+// It contains no functionality for examining or parsing command line
+// arguments. It doesn't do anything with environment variables. And it
+// certainly can't read configuration files.
+//
+// The purpose of configurable is to act as an [integration
+// nexus](http://www.devever.net/~hl/nexuses), essentially a matchmaker between
+// application configuration and specific configuration interfaces. This
+// creates the important feature that your application's configuration can be
+// expressed completely independently of *how* that configuration is loaded.
+//
+// Configurable doesn't implement any configuration loading logic because it
+// strives to be a neutral intermediary, which abstracts the interface between
+// configurable items and configurators.
+//
+// Pursuant to this, package configurable is this and only this: an interface
+// Configurable which all configuration items must implement, and a facility
+// for registering top-level Configurables and visiting them.
+//
+// In v0, the Configurable interface has no methods and is thus considered to
+// be implemented by anything.
 package configurable
 
 import "sync"
 
-type Configurable interface {
-	CfChildren() []Configurable
-}
+// Configurable is the interface which must be implemented by any configuration
+// item to be used with package configurable. In the current version, v0, it
+// contains no methods and is thus satisfied by anything. All functionality
+// must be obtained via interface upgrades.
+type Configurable interface{}
 
 var configurablesMutex sync.Mutex
 var configurables []Configurable
 
+// Registers a top-level Configurable.
 func Register(configurable Configurable) {
 	configurablesMutex.Lock()
 	defer configurablesMutex.Unlock()
 
-  if configurable == nil {
-    panic("cannot register nil configurable")
-  }
+	if configurable == nil {
+		panic("cannot register nil configurable")
+	}
 
 	configurables = append(configurables, configurable)
 }
 
+// Visits all registered top-level Configurables.
 func Visit(do func(configurable Configurable) error) error {
 	configurablesMutex.Lock()
 	defer configurablesMutex.Unlock()
