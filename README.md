@@ -31,6 +31,47 @@ Included example packages demonstrate how an application or library might
 register various configurable items, and then expose them for configuration via
 the command line, configuration files or other means.
 
+Configurable
+------------
+
+A Configurable is an object that represents some configurable thing. It is
+obliged only to implement the following interface:
+
+```go
+type Configurable interface {
+  CfChildren() []Configurable
+}
+```
+
+A Configurable which has no children may return nil in `CfChildren()`.
+
+Configurable is designed around interface upgrades. If you want to actually do
+anything with a Configurable, you must attempt to cast it to an interface with
+the methods you need. A Configurable is not obliged to implement any interface
+besides Configurable, but almost always will.
+
+Here are some common interfaces implemented by Configurables, in descending
+order of importance:
+
+  - `CfSetValue(interface{}) error` — attempt to set the Configurable to a value.
+
+  - `CfName() string` — get the Configurable's name.
+
+  - `CfDefaultValue() interface{}` — get the Configurable's default value.
+
+  - `CfGetValue() interface{}` — get the Configurable's value.
+
+  - `CfUsageSummaryLine() string` — get a one-line usage summary suitable for
+    use as  command line usage information.
+
+  - `String() string` — the standard Go `String()` interface.
+
+Configurable-specific methods should always be prefixed with `Cf` so that it is clear
+that they are intended for consumption by Configurable consumers.
+
+A command line parsing adapter should typically be able to make do with a Configurable
+which implements just `CfSetValue` and `CfName`.
+
 Background Reading
 ------------------
 
