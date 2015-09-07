@@ -76,6 +76,7 @@ func NewGroup(reg Registerable, name string) *Group {
 type StringFlag struct {
 	name, curValue, summaryLine, defaultValue string
 	curValuep                                 *string
+	priority                                  configurable.Priority
 }
 
 func (sf *StringFlag) String() string {
@@ -118,6 +119,14 @@ func (sf *StringFlag) SetValue(value string) {
 	*sf.curValuep = value
 }
 
+func (sf *StringFlag) CfSetPriority(priority configurable.Priority) {
+	sf.priority = priority
+}
+
+func (sf *StringFlag) CfGetPriority() configurable.Priority {
+	return sf.priority
+}
+
 // Creates a flag of type string.
 //
 // reg: See package-level documentation.
@@ -142,6 +151,7 @@ type IntFlag struct {
 	name, summaryLine      string
 	curValue, defaultValue int
 	curValuep              *int
+	priority               configurable.Priority
 }
 
 func (sf *IntFlag) String() string {
@@ -196,6 +206,14 @@ func (sf *IntFlag) SetValue(value int) {
 	*sf.curValuep = value
 }
 
+func (sf *IntFlag) CfSetPriority(priority configurable.Priority) {
+	sf.priority = priority
+}
+
+func (sf *IntFlag) CfGetPriority() configurable.Priority {
+	return sf.priority
+}
+
 // Creates a flag of type int.
 //
 // reg: See package-level documentation.
@@ -220,6 +238,7 @@ type BoolFlag struct {
 	name, summaryLine      string
 	curValue, defaultValue bool
 	curValuep              *bool
+	priority               configurable.Priority
 }
 
 func (sf *BoolFlag) String() string {
@@ -275,6 +294,14 @@ func (sf *BoolFlag) Value() bool {
 // Set the flag's current value.
 func (sf *BoolFlag) SetValue(value bool) {
 	*sf.curValuep = value
+}
+
+func (sf *BoolFlag) CfSetPriority(priority configurable.Priority) {
+	sf.priority = priority
+}
+
+func (sf *BoolFlag) CfGetPriority() configurable.Priority {
+	return sf.priority
 }
 
 // Creates a flag of type bool.

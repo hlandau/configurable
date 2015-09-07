@@ -64,6 +64,11 @@ order of importance:
 
   - `String() string` — the standard Go `String()` interface.
 
+  - `CfGetPriority() Priority` — retrieves the priority of the value, used to
+    determine whether it should be overridden.
+
+  - `CfSetPriority(priority Priority)` — sets the priority of the value.
+
 Configurable-specific methods should always be prefixed with `Cf` so that it is clear
 that they are intended for consumption by Configurable consumers.
 

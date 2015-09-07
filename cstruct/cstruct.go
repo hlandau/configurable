@@ -26,16 +26,22 @@ import "gopkg.in/hlandau/configurable.v0"
 
 type group struct {
 	configurables []configurable.Configurable
+	name          string
 }
 
 func (g *group) CfChildren() []configurable.Configurable {
 	return g.configurables
 }
 
+func (g *group) CfName() string {
+	return g.name
+}
+
 type value struct {
 	name, usageSummaryLine string
 	v                      reflect.Value
 	defaultValue           interface{}
+	priority               configurable.Priority
 }
 
 func (v *value) CfName() string {
@@ -80,6 +86,14 @@ func (v *value) CfUsageSummaryLine() string {
 	return v.usageSummaryLine
 }
 
+func (v *value) CfGetPriority() configurable.Priority {
+	return v.priority
+}
+
+func (v *value) CfSetPriority(priority configurable.Priority) {
+	v.priority = priority
+}
+
 var re_no = regexp.MustCompilePOSIX(`^(00?|no?|f(alse)?)$`)
 
 func parseString(s string, t reflect.Type) (interface{}, error) {
@@ -103,8 +117,8 @@ func parseString(s string, t reflect.Type) (interface{}, error) {
 }
 
 // Like New, but panics on failure.
-func MustNew(target interface{}) (c configurable.Configurable) {
-	c, err := New(target)
+func MustNew(target interface{}, name string) (c configurable.Configurable) {
+	c, err := New(target, name)
 	if err != nil {
 		panic(err)
 	}
@@ -115,7 +129,7 @@ func MustNew(target interface{}) (c configurable.Configurable) {
 // Creates a new group Configurable, with children representing the fields.
 //
 // The Configurables set the values of the fields of the instance.
-func New(target interface{}) (c configurable.Configurable, err error) {
+func New(target interface{}, name string) (c configurable.Configurable, err error) {
 	t := reflect.TypeOf(target)
 	v := reflect.ValueOf(target)
 
@@ -129,7 +143,9 @@ func New(target interface{}) (c configurable.Configurable, err error) {
 		return
 	}
 
-	g := &group{}
+	g := &group{
+		name: name,
+	}
 	numFields := t.NumField()
 	for i := 0; i < numFields; i++ {
 		field := t.Field(i)

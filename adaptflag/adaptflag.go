@@ -55,7 +55,24 @@ func (v *value) Set(s string) error {
 		return errNotSupported
 	}
 
-	return cs.CfSetValue(s)
+	cp, ok := v.c.(interface {
+		CfGetPriority() configurable.Priority
+		CfSetPriority(priority configurable.Priority)
+	})
+	if !ok {
+		return cs.CfSetValue(s)
+	}
+
+	if cp.CfGetPriority() <= configurable.FlagPriority {
+		err := cs.CfSetValue(s)
+		if err != nil {
+			return err
+		}
+
+		cp.CfSetPriority(configurable.FlagPriority)
+	}
+
+	return nil
 }
 
 func (v *value) Get() interface{} {

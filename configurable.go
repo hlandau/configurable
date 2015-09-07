@@ -68,3 +68,20 @@ func Visit(do func(configurable Configurable) error) error {
 
 	return nil
 }
+
+// Priority values are used to determine whether values should be overridden.
+type Priority int
+
+const (
+	// The priority of default-set values.
+	DefaultPriority Priority = 0
+
+	// The recommended priority for values set from environment variables.
+	EnvPriority = 1000
+
+	// The recommended priority for values loaded from a config file.
+	ConfigPriority = 2000
+
+	// The recommended priority for values set from command line flags.
+	FlagPriority = 3000
+)
