@@ -26,7 +26,7 @@
 //
 // In v0, the Configurable interface has no methods and is thus considered to
 // be implemented by anything.
-package configurable
+package configurable // import "gopkg.in/hlandau/configurable.v0"
 
 import "sync"
 
