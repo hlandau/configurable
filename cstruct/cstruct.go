@@ -38,10 +38,10 @@ func (g *group) CfName() string {
 }
 
 type value struct {
-	name, usageSummaryLine string
-	v                      reflect.Value
-	defaultValue           interface{}
-	priority               configurable.Priority
+	name, usageSummaryLine, envVarName string
+	v                                  reflect.Value
+	defaultValue                       interface{}
+	priority                           configurable.Priority
 }
 
 func (v *value) CfName() string {
@@ -84,6 +84,10 @@ func (v *value) CfDefaultValue() interface{} {
 
 func (v *value) CfUsageSummaryLine() string {
 	return v.usageSummaryLine
+}
+
+func (v *value) CfEnvVarName() string {
+	return v.envVarName
 }
 
 func (v *value) CfGetPriority() configurable.Priority {
@@ -152,6 +156,7 @@ func New(target interface{}, name string) (c configurable.Configurable, err erro
 		name := strings.ToLower(field.Name)
 		usage := field.Tag.Get("usage")
 		dflt := field.Tag.Get("default")
+		envVarName := field.Tag.Get("env")
 
 		if usage == "" && dflt == "" {
 			continue
@@ -169,6 +174,7 @@ func New(target interface{}, name string) (c configurable.Configurable, err erro
 		vv := &value{
 			v:                vf,
 			name:             name,
+			envVarName:       envVarName,
 			usageSummaryLine: usage,
 			defaultValue:     dfltv,
 		}
