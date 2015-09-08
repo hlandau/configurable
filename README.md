@@ -69,6 +69,9 @@ order of importance:
 
   - `CfSetPriority(priority Priority)` — sets the priority of the value.
 
+  - `CfEnvVarName() string` — if a non-empty string, an environment variable
+    that maps to this Configurable.
+
 Configurable-specific methods should always be prefixed with `Cf` so that it is clear
 that they are intended for consumption by Configurable consumers.
 
