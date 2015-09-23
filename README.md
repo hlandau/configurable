@@ -81,16 +81,11 @@ which implements just `CfSetValue` and `CfName`.
 The Standard Bindings
 ---------------------
 
-The `cflag` package allows you to easily declare configuration items in a flag-like manner.
+For a package which makes it easy to register and consume configurables, see
+the [easyconfig](https://github.com/hlandau/easyconfig) package.
 
-The `cstruct` package allows you to automatically generate configuration items from an annotated structure.
-
-The `adaptflag` package adapts declared configuration items to flags and
-registers them with the standard flag package and the
-[pflag](https://github.com/ogier/pflag) package. You can also use it with any
-flag package you like if it implements a similar registration interface.
-
-If you wish, you can eschew all of these packages and make your own.
+Of course, nothing requires you to use the easyconfig package. You are free to
+eschew it and make your own.
 
 Background Reading
 ------------------

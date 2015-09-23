@@ -24,14 +24,14 @@
 // Configurable which all configuration items must implement, and a facility
 // for registering top-level Configurables and visiting them.
 //
-// In v0, the Configurable interface has no methods and is thus considered to
+// In v1, the Configurable interface has no methods and is thus considered to
 // be implemented by anything.
-package configurable // import "gopkg.in/hlandau/configurable.v0"
+package configurable // import "gopkg.in/hlandau/configurable.v1"
 
 import "sync"
 
 // Configurable is the interface which must be implemented by any configuration
-// item to be used with package configurable. In the current version, v0, it
+// item to be used with package configurable. In the current version, v1, it
 // contains no methods and is thus satisfied by anything. All functionality
 // must be obtained via interface upgrades.
 type Configurable interface{}
