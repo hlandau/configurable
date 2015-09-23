@@ -93,6 +93,7 @@ Background Reading
 ------------------
 
   - [On Nexuses](http://www.devever.net/~hl/nexuses)
+  - [Measurable](https://github.com/hlandau/measurable)
 
 Licence
 -------
