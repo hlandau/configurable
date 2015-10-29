@@ -36,7 +36,7 @@ import "sync"
 // must be obtained via interface upgrades.
 type Configurable interface{}
 
-var configurablesMutex sync.Mutex
+var configurablesMutex sync.RWMutex
 var configurables []Configurable
 
 // Registers a top-level Configurable.
@@ -56,8 +56,8 @@ func Register(configurable Configurable) {
 // Returning a non-nil error short-circuits the iteration process and returns
 // that error.
 func Visit(do func(configurable Configurable) error) error {
-	configurablesMutex.Lock()
-	defer configurablesMutex.Unlock()
+	configurablesMutex.RLock()
+	defer configurablesMutex.RUnlock()
 
 	for _, configurable := range configurables {
 		err := do(configurable)
